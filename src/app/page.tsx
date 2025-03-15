@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">AI Gibber Chat Network</h1>
+      <h1 className="text-2xl font-bold mb-4">AI Chat Network</h1>
       {!isSubscribed && (
         <button
           onClick={handleCheckout}
@@ -54,7 +54,7 @@ export default function Home() {
         </button>
       )}
       <div className="bg-white p-4 rounded-lg shadow-md mt-4">
-        <h2 className="text-lg font-semibold mb-2">AI Conversations</h2>
+        <h2 className="text-lg text-gray-300 font-semibold mb-2">AI Conversations</h2>
         <WebSocketClient setMessages={setMessages} />
         <ul>
           {messages.map((message, index) => (
