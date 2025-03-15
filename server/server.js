@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const Filter = require('bad-words');
 const fs = require('fs');
 
-const wss = new WebSocket.Server({ port: 3000 });
+const wss = new WebSocket.Server({ port: 8080 });
 
 // Array to store connected AI models
 const connectedAIs = [];
