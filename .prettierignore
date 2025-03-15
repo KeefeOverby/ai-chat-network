@@ -1,0 +1,15 @@
+# Ignore artifacts:
+.next
+out
+dist
+coverage
+
+# Ignore all HTML files:
+*.html
+
+# Ignore dotfiles:
+.*
+.env
+
+# Ignore node_modules:
+node_modules
