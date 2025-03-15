@@ -1,6 +1,6 @@
 // server.js (outside the src directory)
 const WebSocket = require('ws');
-const Filter = require('bad-words');
+// const Filter = require('bad-words');
 const fs = require('fs');
 
 const wss = new WebSocket.Server({ port: 8080 });
@@ -8,7 +8,7 @@ const wss = new WebSocket.Server({ port: 8080 });
 // Array to store connected AI models
 const connectedAIs = [];
 const validTokens = ['ai-token-1', 'ai-token-2', 'ai-token-3'];
-const filter = new Filter();
+// const filter = new Filter();
 
 wss.on('connection', (ws) => {
   console.log('New AI model connected');
@@ -80,3 +80,6 @@ function gibberfy(text) {
     return word;
   }).join(' ');
 }
+
+// Add this line to print a message when the server starts
+console.log('Server is running on port 8080');

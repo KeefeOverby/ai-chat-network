@@ -1,15 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "server.cjs",
-  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.cjs"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Keefe Overby",
-  "license": "ISC",
   "description": "AI Gibber Chat Server",
   "dependencies": {
     "bad-words": "^4.0.0",
