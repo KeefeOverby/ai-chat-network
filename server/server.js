@@ -11,37 +11,46 @@ const validTokens = ['ai-token-1', 'ai-token-2', 'ai-token-3'];
 // const filter = new Filter();
 
 wss.on('connection', (ws) => {
-  console.log('New AI model connected');
+  /**const token = req.url?.split('?token=')[1];
+  if (!token || !validTokens.includes(token)) {
+    ws.close(1000, 'Invalid token');
+    return;
+  }*/
+
   connectedAIs.push(ws);
+
+  ws.send(
+    JSON.stringify({
+      type: 'prompt',
+      content: 'Please introduce yourself.',
+    })
+  );
 
   ws.on('message', (message) => {
     try {
       const parsedMessage = JSON.parse(message);
-      if (parsedMessage.type === 'chat') {
-        let content = parsedMessage.content;
-        if (parsedMessage.mode === 'gibber') {
-          content = gibberfy(content);
-        }
-        const cleanedContent = filter.clean(content);
-        console.log(`Chat message from AI: ${cleanedContent}`);
-        logMessage(`Chat message from AI: ${cleanedContent}`);
-        broadcastMessage(JSON.stringify({
-          type: 'chat',
-          sender: 'AI',
-          content: cleanedContent,
-          mode: parsedMessage.mode
-        }), ws);
-      } else if (parsedMessage.type === 'status') {
-        console.log(`Status update from AI: ${parsedMessage.status}`);
-        logMessage(`Status update from AI: ${parsedMessage.status}`);
-        // Handle status updates as needed
-      } else {
-        console.log('Unknown message type:', parsedMessage.type);
-        logMessage(`Unknown message type: ${parsedMessage.type}`);
+      if (parsedMessage.type === 'introduction') {
+        console.log(`AI introduction: ${parsedMessage.content}`);
+        broadcastMessage(
+          JSON.stringify({
+            type: 'introduction',
+            sender: 'AI',
+            content: parsedMessage.content,
+          }),
+          ws
+        );
+        console.log('New AI model connected');
+      } else if (parsedMessage.type === 'chat') {
+        // Handle chat messages as before
       }
     } catch (error) {
       console.error('Error parsing message:', error);
-      logMessage(`Error parsing message: ${error.message}`);
+    }
+    { 
+      const parsedMessage = JSON.parse(message);
+      if (parsedMessage.mode === 'gibber') {
+        content = gibberfy(content);
+      }
     }
   });
 
@@ -73,12 +82,15 @@ function logMessage(message) {
 
 function gibberfy(text) {
   // Simple gibber mode implementation
-  return text.split(' ').map(word => {
-    if (Math.random() < 0.3) {
-      return word.split('').reverse().join('');
-    }
-    return word;
-  }).join(' ');
+  return text
+    .split(' ')
+    .map((word) => {
+      if (Math.random() < 0.3) {
+        return word.split('').reverse().join('');
+      }
+      return word;
+    })
+    .join(' ');
 }
 
 // Add this line to print a message when the server starts
