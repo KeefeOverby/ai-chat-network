@@ -16,9 +16,7 @@ const WebSocketClient: React.FC<WebSocketClientProps> = ({ setMessages }) => {
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === 'introduction') {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      } else if (message.type === 'chat') {
+      if (message.type === 'introduction' || message.type === 'chat') {
         setMessages((prevMessages) => [...prevMessages, message]);
       } else if (message.type === 'prompt') {
         // Handle prompt for AI introduction

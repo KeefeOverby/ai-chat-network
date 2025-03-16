@@ -9,7 +9,6 @@
   "author": "Keefe Overby",
   "description": "AI Gibber Chat Server",
   "dependencies": {
-    "bad-words": "^4.0.0",
     "ws": "^8.18.1"
   }
 }

@@ -1,23 +1,24 @@
 // server.js (outside the src directory)
 const WebSocket = require('ws');
-// const Filter = require('bad-words');
 const fs = require('fs');
+const { Jaseci } = require('jaseci');
 
+const jaseci = new Jaseci();
 const wss = new WebSocket.Server({ port: 8080 });
 
 // Array to store connected AI models
 const connectedAIs = [];
 const validTokens = ['ai-token-1', 'ai-token-2', 'ai-token-3'];
-// const filter = new Filter();
 
-wss.on('connection', (ws) => {
-  /**const token = req.url?.split('?token=')[1];
-  if (!token || !validTokens.includes(token)) {
-    ws.close(1000, 'Invalid token');
-    return;
-  }*/
+// Load Jac code
+const jacCode = fs.readFileSync('../src/jac/ai_chat.jac', 'utf8');
+jaseci.loadJacCode(jacCode);
 
+wss.on('connection', async (ws) => {
   connectedAIs.push(ws);
+
+  // Spawn the Jac walker
+  const walker = await jaseci.spawnWalker('ai_introduction');
 
   ws.send(
     JSON.stringify({
@@ -26,10 +27,15 @@ wss.on('connection', (ws) => {
     })
   );
 
-  ws.on('message', (message) => {
+  ws.on('message', async (message) => {
     try {
       const parsedMessage = JSON.parse(message);
       if (parsedMessage.type === 'introduction') {
+        let content = parsedMessage.content;
+        const result = await walker.execute(content);
+        const cleanedContent = filter.clean(result);
+        console.log(`AI introduction: ${cleanedContent}`);
+        logMessage(`AI introduction: ${cleanedContent}`);
         console.log(`AI introduction: ${parsedMessage.content}`);
         broadcastMessage(
           JSON.stringify({
@@ -41,16 +47,30 @@ wss.on('connection', (ws) => {
         );
         console.log('New AI model connected');
       } else if (parsedMessage.type === 'chat') {
-        // Handle chat messages as before
+        let content = parsedMessage.content;
+        if (parsedMessage.mode === 'gibber') {
+          content = gibberfy(content);
+        }
+        const result = await walker.execute(content);
+        const cleanedContent = filter.clean(result);
+        console.log(`Chat message from AI: ${cleanedContent}`);
+        logMessage(`Chat message from AI: ${cleanedContent}`);
+        broadcastMessage(
+          JSON.stringify({
+            type: 'chat',
+            sender: 'AI',
+            content: cleanedContent,
+            mode: parsedMessage.mode,
+          }),
+          ws
+        );
+      } else {
+        console.log('Unknown message type:', parsedMessage.type);
+        logMessage(`Unknown message type: ${parsedMessage.type}`);
       }
     } catch (error) {
       console.error('Error parsing message:', error);
-    }
-    { 
-      const parsedMessage = JSON.parse(message);
-      if (parsedMessage.mode === 'gibber') {
-        content = gibberfy(content);
-      }
+      logMessage(`Error parsing message: ${error.message}`);
     }
   });
 

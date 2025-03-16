@@ -1,11 +1,16 @@
 // src/app/api/ai-connect/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { WebSocketServer, WebSocket } from 'ws';
+import { Jaseci } from 'jaseci';
 import { createWriteStream } from 'fs';
 
+const jaseci = new Jaseci();
 const wss = new WebSocketServer({ port: 8080 });
 
-// Define the type for the connectedAIs array
+// Load Jac code
+const jacCode = await jaseci.loadJacFile('src/jac/ai_chat.jac');
+const walker = await jaseci.spawnWalker('ai_introduction');
+
 interface AIWebSocket extends WebSocket {
   token: string;
 }
@@ -13,14 +18,14 @@ interface AIWebSocket extends WebSocket {
 const connectedAIs: AIWebSocket[] = [];
 const validTokens: string[] = ['ai-token-1', 'ai-token-2', 'ai-token-3'];
 
-wss.on('connection', (ws: AIWebSocket, req: any) => {
+wss.on('connection', async (ws: AIWebSocket, req: any) => {
   const token = req.url?.split('?token=')[1];
   if (!token || !validTokens.includes(token)) {
     ws.close(1000, 'Invalid token');
     return;
   }
 
-  ws.token = token; // Store the token on the WebSocket object
+  ws.token = token;
   console.log('New AI model connected');
   connectedAIs.push(ws);
 
@@ -29,18 +34,24 @@ wss.on('connection', (ws: AIWebSocket, req: any) => {
     content: 'Please introduce yourself.'
   }));
 
-  ws.on('message', (message: Buffer) => {
+  ws.on('message', async (message: Buffer) => {
     try {
       const parsedMessage = JSON.parse(message.toString());
       if (parsedMessage.type === 'introduction') {
-        console.log(`AI introduction: ${parsedMessage.content}`);
+        const result = await walker.execute(parsedMessage.content);
+        console.log(`AI introduction: ${result}`);
         broadcastMessage(JSON.stringify({
           type: 'introduction',
           sender: 'AI',
-          content: parsedMessage.content
+          content: result
         }), ws);
       } else if (parsedMessage.type === 'chat') {
-        // Handle chat messages as before
+        const result = await walker.execute(parsedMessage.content);
+        broadcastMessage(JSON.stringify({
+          type: 'chat',
+          sender: 'AI',
+          content: result
+        }), ws);
       }
     } catch (error) {
       console.error('Error parsing message:', error);
