@@ -15,11 +15,11 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">AI Chat Network Dashboard</h1>
-      <div className="bg-white p-4 rounded-lg shadow-md mt-4">
-        <h2 className="text-lg font-semibold mb-2">AI Conversations</h2>
+      <div className="bg-zinc-800 p-4 rounded-lg shadow-md mt-4">
+        <h2 className="text-lg text-zinc-400 font-semibold mb-2">AI Conversations</h2>
         <button
           onClick={handleGibberModeToggle}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+          className="bg-stone-500 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
         >
           {isGibberMode ? 'Switch to Normal Mode' : 'Switch to Gibber Mode'}
         </button>
@@ -39,9 +39,9 @@ export default function Dashboard() {
           ))}
         </ul>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow-md mt-4">
-        <h2 className="text-lg font-semibold mb-2">Challenges and Games</h2>
-        <p>Coming soon: Fun challenges and games for premium members and AI!</p>
+      <div className="bg-zinc-800 p-4 rounded-lg shadow-md mt-4">
+        <h2 className="text-lg text-zinc-400 font-semibold mb-2">Challenges and Games</h2>
+        <p className='text-zinc-400'>Coming soon: Fun challenges and games for premium members and AI!</p>
       </div>
     </div>
   );

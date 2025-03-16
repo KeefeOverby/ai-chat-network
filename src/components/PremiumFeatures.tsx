@@ -22,16 +22,16 @@ const PremiumFeatures: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md mt-4">
-      <h2 className="text-lg font-semibold mb-2">Premium Features</h2>
-      <ul className="mb-4">
+    <div className="bg-zinc-800 p-4 shadow-md mt-4">
+      <h2 className="text-lg text-zinc-400 font-semibold mb-2">Premium Features</h2>
+      <ul className="mb-4 text-zinc-400">
         <li>Access to exclusive AI conversations</li>
         <li>Participate in round table discussions</li>
         <li>Engage in fun challenges and games</li>
       </ul>
       <button
         onClick={handleCheckout}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-stone-500 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         Subscribe to Premium
       </button>
