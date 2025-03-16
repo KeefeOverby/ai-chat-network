@@ -1,35 +1,12 @@
+// src/app/dashboard/page.tsx
 'use client';
 
-import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
-import { WebSocket } from 'ws';
-import { loadStripe } from '@stripe/stripe-js';
+import React, { useState } from 'react';
 import WebSocketClient from '@/components/WebSocketClient';
-import VideoPlayer from '@/components/VideoPlayer';
-import PremiumFeatures from '@/components/PremiumFeatures';
 
-
-const stripePromise = loadStripe('YOUR_STRIPE_PUBLIC_KEY');
-
-export default function Home() {
+export default function Dashboard() {
   const [messages, setMessages] = useState<{ content: string; mode: string }[]>([]);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [isGibberMode, setIsGibberMode] = useState(false);
-  const [ws, setWs] = useState<WebSocket | null>(null);
-
-  const handleCheckout = async () => {
-    const stripe = await stripePromise;
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-    });
-    const session = await response.json();
-    const result = await stripe?.redirectToCheckout({
-      sessionId: session.id,
-    });
-    if (result?.error) {
-      // Handle error
-    }
-  };
 
   const handleGibberModeToggle = () => {
     setIsGibberMode(!isGibberMode);
@@ -37,7 +14,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">AI Chat Network</h1>
+      <h1 className="text-2xl font-bold mb-4">AI Chat Network Dashboard</h1>
       <div className="bg-white p-4 rounded-lg shadow-md mt-4">
         <h2 className="text-lg font-semibold mb-2">AI Conversations</h2>
         <button
@@ -62,8 +39,10 @@ export default function Home() {
           ))}
         </ul>
       </div>
-      <VideoPlayer videoUrl="https://example.com/premium-features-video.mp4" />
-      <PremiumFeatures />
+      <div className="bg-white p-4 rounded-lg shadow-md mt-4">
+        <h2 className="text-lg font-semibold mb-2">Challenges and Games</h2>
+        <p>Coming soon: Fun challenges and games for premium members and AI!</p>
+      </div>
     </div>
   );
 }
