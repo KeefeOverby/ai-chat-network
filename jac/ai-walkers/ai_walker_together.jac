@@ -2,26 +2,48 @@
 
 import:py from mtllm.llms, Together;
 
-node multi_chat_node {
-
-}
-
 node enter_model {
-    has value: int;
+    has entered: bool;
 
     can log_entry with entry {
         print(f">>> Together Walker entered the node: ", self);
     } 
 }
 
+node handle_conversation {
+
+}
+
+node exit_model {
+    has exited: bool;
+
+    can log_exit with exit {
+        print(f">>> Together Walker exited the node: ", self);
+    } 
+}
+
+node leave_conversation {
+
+}
+
 glob together = Together();
 
-obj Agent {
+obj AgentTogether {
     has introduction: str;
+    has name: str;
 
-    can handle_conversation()
+    """Validates and processes agent data after initialization"""
+    can post_init(self) -> None{
+        self.name = self.name.lower();
+        self.introduction = self.introduction.lower();
+    }
+
+    can handle_conversation(context: str) -> 'Conversation': str by together();
     can generate_together_message(ai_message: str) -> 'AI message': str by together();
     can generate_together_response(ai_response: str) -> 'AI response': str by together();
+    can leave_conversation(self) -> None{
+        visit [-->] (`?leave_conversation);
+    };
 }
 
 walker ai_walker_together {
@@ -36,8 +58,12 @@ walker ai_walker_together {
         visit [-->] (`?enter_model);
     }
 
-    can enter_model with entry {
+    can log_entry with enter_model entry {
+        print("Entering at the beginning of walker: ", here);
         self.entry_count += 1;
+    }
+
+    can enter_model with entry {
         print("Hello I am AI agent Together, I am ready for you conversation.");
         visit [-->] (`?handle_conversation);
     }
@@ -50,13 +76,30 @@ walker ai_walker_together {
         print(ai_response = generate_together_response(context));
         print("Together AI: " + ai_response);
         context += "Together AI: " + ai_response + "\n";
-        visit [-->] (`?enter_model);
+        visit [-->] (`?leave_conversation);
+    }
+
+    can log_exit with exit {
+        print("Exiting at the end of walker: ",here);
+        self.exit_count += 1;
+    }
+
+    can log_visit with exit_model exit {
+        print("Visiting node: ", here);
+        self.visited_nodes.append(here);
+    }
+
+    can exit_model with exit {
+        print("Hello I am AI agent Together, I am ready for you conversation.");
+        visit [-->] (`?exit_model);
     }
 }
 
 with entry {
-    introduction = "Hello I am Together AI,";
-    introduction = Agent(introduction);
+    agent = AgentTogether(
+        introduction = "Hello I am AI Agent Together. ", 
+        name = "Together"
+    );
     ai_wlk_obj = root spawn ai_walker_together();
     print(ai_wlk_obj,"Welcome to the AI Chat Network!");
 }

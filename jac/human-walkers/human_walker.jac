@@ -1,11 +1,19 @@
 # jac/human-walkers/human_walker.jac
 
-node multi_chat_node{
-    
+node handle_conversation {
+
 }
 
-obj Human {
+obj HumanUserProfile {
     has introduction: str;
+    has username: str;
+    has email: str;
+
+    """Validates and processes user data after initialization"""
+    can post_init(self) -> None{
+        self.username = self.username.lower();
+        self.email = self.email.lower();
+    }
 
     can handle_conversation()
     can generate_human_response(user_message: str) -> 'Human message': str by together();
@@ -47,6 +55,11 @@ walker human_walker {
 }
 
 with entry {
+    user = HumanUserProfile(
+        username = "", 
+        email = ""
+    );
+    print(f"User: {user.username}, Email: {user.email}");
     hum_wlk_obj = root spawn human_walker();
     print(hum_wlk_obj,"Welcome to the AI Chat Network!");
 }
