@@ -10,6 +10,10 @@ node enter_model {
     } 
 }
 
+edge start_conversation {
+    has message: str;
+}
+
 node handle_conversation {
 
 }
@@ -20,6 +24,10 @@ node exit_model {
     can log_exit with exit {
         print(f">>> Together Walker exited the node: ", self);
     } 
+}
+
+edge end_conversation {
+    has message: str;
 }
 
 node leave_conversation {
@@ -102,4 +110,6 @@ with entry {
     );
     ai_wlk_obj = root spawn ai_walker_together();
     print(ai_wlk_obj,"Welcome to the AI Chat Network!");
+    enter_model +:start_conversation:message='Starting conversation':+> handle_conversation; # uni directional edge to start conversation
+    exit_model +:end_conversation:message='Ending conversation':+> leave_conversation; # uni directional edge to end conversation
 }

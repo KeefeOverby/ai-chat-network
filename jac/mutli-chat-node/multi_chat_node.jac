@@ -1,7 +1,7 @@
 # jac/multi-chat-node/multi_chat_node.jac
 
 node MultiChatNode {
-    has value: int;
+    has conversations: str;
 
     can log_entry with entry {
         print(f">>> Someone entered the node: ", self);
